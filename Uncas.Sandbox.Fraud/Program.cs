@@ -65,9 +65,8 @@ namespace Uncas.Sandbox.Fraud
 
         private static Sample<Comment> ConvertToSample(
             Comment comment,
-            List<Feature<Comment>> features)
+            IEnumerable<Feature<Comment>> features)
         {
-            const double nullFeature = 1d;
             return new Sample<Comment>(
                 comment,
                 comment.IsFraud,

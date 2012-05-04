@@ -17,6 +17,30 @@ namespace Uncas.Sandbox.Fraud
                                    new Comment
                                        {
                                            IsFraud = false,
+                                           UserReputation = 32,
+                                           Text = "Hi a dollar for your thoughts"
+                                       },
+                                   new Comment
+                                       {
+                                           IsFraud = false,
+                                           UserReputation = 12,
+                                           Text = "Hi again I saw a rich man"
+                                       },
+                                   new Comment
+                                       {
+                                           IsFraud = false,
+                                           UserReputation = 92,
+                                           Text = "Hi how are you doing"
+                                       },
+                                   new Comment
+                                       {
+                                           IsFraud = false,
+                                           UserReputation = 32,
+                                           Text = "Hi a dollar for your thoughts"
+                                       },
+                                   new Comment
+                                       {
+                                           IsFraud = false,
                                            UserReputation = 12,
                                            Text = "Hi again I saw a rich man"
                                        },
@@ -96,16 +120,24 @@ namespace Uncas.Sandbox.Fraud
                                        {
                                            IsFraud = true,
                                            UserReputation = 2,
-                                           Text = "One million dollars"
+                                           Text = "One million dollars. Please make a bank transfer to this account."
                                        },
                                    new Comment
                                        {
                                            IsFraud = true,
                                            UserReputation = 0,
-                                           Text = "One thousand dollars"
+                                           Text = "One thousand dollars. Viagra makes you happy."
                                        }
                                };
-            return comments;
+            var result = new List<Comment>();
+            result.AddRange(comments);
+            result.AddRange(comments);
+            result.AddRange(comments);
+            result.AddRange(comments);
+            result.AddRange(comments);
+            result.AddRange(comments);
+            result.AddRange(comments);
+            return result;
         }
     }
 }

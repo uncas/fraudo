@@ -13,7 +13,11 @@ namespace Uncas.Sandbox.Fraud
                     "dollar",
                     "rich",
                     "famous",
-                    "sex"
+                    "sex",
+                    "viagra",
+                    "bank",
+                    "account",
+                    "bank transfer"
                 };
 
         public bool ContainsFeature(Comment comment)

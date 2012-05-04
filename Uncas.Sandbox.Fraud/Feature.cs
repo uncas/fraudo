@@ -15,7 +15,7 @@ namespace Uncas.Sandbox.Fraud
 
         public static Feature<T> Null()
         {
-            return new Feature<T>("Null", x => 1d);
+            return new Feature<T>("Offset", x => 1d);
         }
     }
 }
