@@ -11,12 +11,18 @@ namespace Uncas.Sandbox.Fraud
             const double alpha = 0.5d;
             const int iterations = 1000;
 
-            IList<Comment> comments = new CommentRepository().GetComments();
+            var features = new List<Feature<Comment>>();
+            features.Add(Feature<Comment>.Null());
             var badWordFeature = new BadWordFeature();
+            features.Add(new Feature<Comment>("Bad word", x => badWordFeature.NumberOfBadWords(x)));
+            features.Add(new Feature<Comment>("Reputation", x => x.UserReputation/100d));
+            features.AddRange(BadWordFeature.ContainsIndividualWords());
+
+            IList<Comment> comments = new CommentRepository().GetComments();
             IEnumerable<Sample<Comment>> samples =
                 comments.Select(
                     c =>
-                    ConvertToSample(c, badWordFeature)).
+                    ConvertToSample(c, features)).
                     ToList();
 
             int numberOfFeatures = samples.First().Features.Length;
@@ -45,8 +51,13 @@ namespace Uncas.Sandbox.Fraud
                 thetas = thetas.Select((x, j) => x + delta[j]).ToList();
             }
 
-            foreach (double theta in thetas)
-                Console.WriteLine("Theta: {0:N3}", theta);
+            for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
+            {
+                double theta = thetas[featureIndex];
+                Feature<Comment> feature = features[featureIndex];
+                Console.WriteLine("Theta={1:N3}, Feature: {0}", feature.Name, theta);
+            }
+
             foreach (var sample in samples)
                 Console.WriteLine("{0}, {1:P2}", sample.Match, sample.Probability);
             Console.ReadKey();
@@ -54,18 +65,13 @@ namespace Uncas.Sandbox.Fraud
 
         private static Sample<Comment> ConvertToSample(
             Comment comment,
-            BadWordFeature badWordFeature)
+            List<Feature<Comment>> features)
         {
             const double nullFeature = 1d;
-            var features = new List<double>();
-            features.Add(nullFeature);
-            features.Add(badWordFeature.NumberOfBadWords(comment));
-            features.Add(comment.UserReputation/100d);
-            features.AddRange(badWordFeature.ContainsIndividualWords(comment).ToArray());
             return new Sample<Comment>(
                 comment,
                 comment.IsFraud,
-                features.ToArray());
+                features);
         }
 
         private static double Probability(Sample<Comment> s, IEnumerable<double> theta)

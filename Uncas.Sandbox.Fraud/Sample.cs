@@ -1,12 +1,15 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Uncas.Sandbox.Fraud
 {
     public class Sample<T>
     {
-        public Sample(T item, bool match, params double[] features)
+        public Sample(T item, bool match, IEnumerable<Feature<T>> features)
         {
             Item = item;
             Match = match;
-            Features = features;
+            Features = features.Select(x => x.Value(item)).ToArray();
         }
 
         public T Item { get; private set; }
