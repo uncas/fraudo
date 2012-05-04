@@ -9,7 +9,11 @@ namespace Uncas.Sandbox.Fraud
             new List<string>
                 {
                     "win",
-                    "million"
+                    "million",
+                    "dollar",
+                    "rich",
+                    "famous",
+                    "sex"
                 };
 
         public bool ContainsFeature(Comment comment)

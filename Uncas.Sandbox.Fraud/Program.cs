@@ -41,9 +41,7 @@ namespace Uncas.Sandbox.Fraud
 
             Console.WriteLine("{0:N3}, {1:N3}", theta0, theta1);
             foreach (var sample in samples)
-            {
-                Console.WriteLine("{0}, {1:N5}", sample.Match, sample.Probability);
-            }
+                Console.WriteLine("{0}, {1:N6}", sample.Match, sample.Probability);
             Console.ReadKey();
         }
 
