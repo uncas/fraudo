@@ -11,7 +11,7 @@ namespace Uncas.Sandbox.Fraud
                                    new Comment
                                        {
                                            IsFraud = false,
-                                           UserReputation = 0,
+                                           UserReputation = 1,
                                            Text = "Hi a dollar for your thoughts"
                                        },
                                    new Comment

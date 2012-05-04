@@ -48,7 +48,7 @@ namespace Uncas.Sandbox.Fraud
             foreach (double theta in thetas)
                 Console.WriteLine("Theta: {0:N3}", theta);
             foreach (var sample in samples)
-                Console.WriteLine("{0}, {1:N6}", sample.Match, sample.Probability);
+                Console.WriteLine("{0}, {1:P2}", sample.Match, sample.Probability);
             Console.ReadKey();
         }
 
@@ -57,12 +57,15 @@ namespace Uncas.Sandbox.Fraud
             BadWordFeature badWordFeature)
         {
             const double nullFeature = 1d;
+            var features = new List<double>();
+            features.Add(nullFeature);
+            features.Add(badWordFeature.NumberOfBadWords(comment));
+            features.Add(comment.UserReputation/100d);
+            features.AddRange(badWordFeature.ContainsIndividualWords(comment).ToArray());
             return new Sample<Comment>(
                 comment,
                 comment.IsFraud,
-                nullFeature,
-                badWordFeature.NumberOfBadWords(comment),
-                comment.UserReputation/100d);
+                features.ToArray());
         }
 
         private static double Probability(Sample<Comment> s, IEnumerable<double> theta)

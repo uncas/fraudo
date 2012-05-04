@@ -25,5 +25,10 @@ namespace Uncas.Sandbox.Fraud
         {
             return _words.Count(comment.Text.ToLower().Contains);
         }
+
+        public IEnumerable<double> ContainsIndividualWords(Comment comment)
+        {
+            return _words.Select(word => comment.Text.ToLower().Contains(word) ? 1d : 0d);
+        }
     }
 }
