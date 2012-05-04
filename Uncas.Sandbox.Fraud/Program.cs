@@ -9,7 +9,7 @@ namespace Uncas.Sandbox.Fraud
         private static void Main()
         {
             const double alpha = 0.5d;
-            const int iterations = 2000;
+            const int iterations = 1000;
 
             IList<Comment> comments = new CommentRepository().GetComments();
             var badWordFeature = new BadWordFeature();
@@ -57,13 +57,11 @@ namespace Uncas.Sandbox.Fraud
             BadWordFeature badWordFeature)
         {
             const double nullFeature = 1d;
-            double containsBadWord = badWordFeature.ContainsFeature(comment) ? 1d : 0d;
             return new Sample<Comment>(
                 comment,
                 comment.IsFraud,
                 nullFeature,
-                badWordFeature.NumberOfBadWords(comment)); //,
-            //containsBadWord);
+                badWordFeature.NumberOfBadWords(comment));
         }
 
         private static double Probability(Sample<Comment> s, IEnumerable<double> theta)
