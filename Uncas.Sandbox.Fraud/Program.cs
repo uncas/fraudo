@@ -9,24 +9,31 @@ namespace Uncas.Sandbox.Fraud
         private static void Main()
         {
             const double alpha = 0.5d;
-
-            // Guess at theta
-            IEnumerable<double> theta = new[] {0.1d, 1d}.ToList();
+            const int iterations = 2000;
 
             IList<Comment> comments = new CommentRepository().GetComments();
             var badWordFeature = new BadWordFeature();
             IEnumerable<Sample<Comment>> samples =
-                comments.Select(c => new Sample<Comment>(c, c.IsFraud, 1d, badWordFeature.NumberOfBadWords(c))).
+                comments.Select(
+                    c =>
+                    ConvertToSample(c, badWordFeature)).
                     ToList();
 
-            for (int i = 0; i < 100; i++)
+            int numberOfFeatures = samples.First().Features.Length;
+
+            // Guess at theta
+            IList<double> thetas = new List<double>();
+            for (int j = 0; j < numberOfFeatures; j++)
+                thetas.Add(1d);
+
+            for (int i = 0; i < iterations; i++)
             {
                 foreach (var sample in samples)
-                    sample.Probability = Probability(sample, theta);
-                List<double> sums = theta.Select(t => 0d).ToList();
+                    sample.Probability = Probability(sample, thetas);
+                List<double> sums = thetas.Select(t => 0d).ToList();
                 foreach (var sample in samples)
                 {
-                    for (int featureIndex = 0; featureIndex < sample.Features.Count(); featureIndex++)
+                    for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
                     {
                         sums[featureIndex] +=
                             (sample.Probability - (sample.Match ? 1 : 0))*
@@ -35,13 +42,28 @@ namespace Uncas.Sandbox.Fraud
                 }
 
                 List<double> delta = sums.Select(s => -alpha*s).ToList();
-                theta = theta.Select((x, j) => x + delta[j]).ToList();
+                thetas = thetas.Select((x, j) => x + delta[j]).ToList();
             }
 
-            Console.WriteLine("{0:N3}, {1:N3}", theta.ElementAt(0), theta.ElementAt(1));
+            foreach (double theta in thetas)
+                Console.WriteLine("Theta: {0:N3}", theta);
             foreach (var sample in samples)
                 Console.WriteLine("{0}, {1:N6}", sample.Match, sample.Probability);
             Console.ReadKey();
+        }
+
+        private static Sample<Comment> ConvertToSample(
+            Comment comment,
+            BadWordFeature badWordFeature)
+        {
+            const double nullFeature = 1d;
+            double containsBadWord = badWordFeature.ContainsFeature(comment) ? 1d : 0d;
+            return new Sample<Comment>(
+                comment,
+                comment.IsFraud,
+                nullFeature,
+                badWordFeature.NumberOfBadWords(comment)); //,
+            //containsBadWord);
         }
 
         private static double Probability(Sample<Comment> s, IEnumerable<double> theta)
