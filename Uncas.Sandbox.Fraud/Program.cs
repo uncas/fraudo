@@ -61,7 +61,8 @@ namespace Uncas.Sandbox.Fraud
                 comment,
                 comment.IsFraud,
                 nullFeature,
-                badWordFeature.NumberOfBadWords(comment));
+                badWordFeature.NumberOfBadWords(comment),
+                comment.UserReputation/100d);
         }
 
         private static double Probability(Sample<Comment> s, IEnumerable<double> theta)
