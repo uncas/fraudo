@@ -19,7 +19,8 @@ namespace Uncas.Sandbox.Fraud
             for (int j = 0; j < numberOfFeatures; j++)
                 thetas.Add(1d);
 
-            for (int i = 0; i < iterations; i++)
+            Console.WriteLine("Iterations:");
+            for (int iteration = 0; iteration < iterations; iteration++)
             {
                 foreach (var sample in samples)
                     sample.Probability = Probability(sample, thetas);
@@ -36,17 +37,37 @@ namespace Uncas.Sandbox.Fraud
 
                 List<double> delta = sums.Select(sum => -stepSize*sum).ToList();
                 thetas = thetas.Select((x, j) => x + delta[j]).ToList();
+
+                if (iteration == 0 || (iteration + 1)%10 == 0)
+                {
+                    double deviationSquared = samples.Select(s => Math.Pow(s.Deviation, 2d)).Sum();
+                    double deviation = Math.Sqrt(deviationSquared/samples.Count);
+                    Console.WriteLine("  {0}: standard deviation={1:P3}", iteration + 1, deviation);
+                }
             }
 
+            Console.WriteLine("Features and best fit:");
             for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
             {
                 double theta = thetas[featureIndex];
                 Feature<T> feature = features[featureIndex];
-                Console.WriteLine("Theta={1:N3}, Feature: {0}", feature.Name, theta);
+                Console.WriteLine("  Theta={1:N3}, Feature: {0}", feature.Name, theta);
             }
 
-            foreach (var sample in samples)
-                Console.WriteLine("{0}, {1:P2}", sample.Match, sample.Probability);
+            const double deviationThreshold = 0.001d;
+            IEnumerable<Sample<T>> deviatingSamples =
+                samples.Where(x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
+            if (deviatingSamples.Any())
+            {
+                Console.WriteLine("Deviations above {0:P1}:", deviationThreshold);
+                foreach (var sample in deviatingSamples.OrderByDescending(x => Math.Abs(x.Deviation)))
+                    Console.WriteLine(
+                        "  {0}, {1:P2}, {2:P2}, {3}",
+                        sample.Match,
+                        sample.Probability,
+                        sample.Deviation,
+                        sample.Identifier);
+            }
 
             return thetas;
         }
@@ -58,6 +79,21 @@ namespace Uncas.Sandbox.Fraud
             double thetaX =
                 sample.Features.Select((feature, featureIndex) => theta.ElementAt(featureIndex)*feature).Sum();
             return 1d/(1d + Math.Exp(-thetaX));
+        }
+
+        private static double Cost<T>(
+            IList<Sample<T>> samples,
+            IList<double> theta)
+        {
+            double cost = 0d;
+            foreach (var sample in samples)
+            {
+                double y = sample.Match ? 1d : 0d;
+                double h = Probability(sample, theta);
+                cost += -y*Math.Log(h) - (1 - y)*Math.Log(1 - h);
+            }
+
+            return cost/samples.Count;
         }
     }
 }

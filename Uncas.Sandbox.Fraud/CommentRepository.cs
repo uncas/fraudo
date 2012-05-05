@@ -132,11 +132,6 @@ namespace Uncas.Sandbox.Fraud
             var result = new List<Comment>();
             result.AddRange(comments);
             result.AddRange(comments);
-            result.AddRange(comments);
-            result.AddRange(comments);
-            result.AddRange(comments);
-            result.AddRange(comments);
-            result.AddRange(comments);
             return result;
         }
     }

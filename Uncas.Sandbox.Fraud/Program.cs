@@ -9,7 +9,7 @@ namespace Uncas.Sandbox.Fraud
         private static void Main()
         {
             const double stepSize = 0.5d;
-            const int iterations = 1000;
+            const int iterations = 100;
 
             var features = new List<Feature<Comment>>();
             features.Add(Feature<Comment>.Null());
@@ -36,6 +36,7 @@ namespace Uncas.Sandbox.Fraud
         {
             return new Sample<Comment>(
                 comment,
+                comment.Text,
                 comment.IsFraud,
                 features);
         }
