@@ -13,8 +13,8 @@ namespace Uncas.Sandbox.Fraud
 
             var features = new List<Feature<Comment>>();
             var badWordFeature = new BadWordFeature();
-            features.Add(new Feature<Comment>("Bad word", comment => badWordFeature.NumberOfBadWords(comment)));
-            features.Add(new Feature<Comment>("Reputation", comment => Math.Log(1d + comment.UserReputation)));
+            features.Add(new Feature<Comment>("Bad word", comment => badWordFeature.NumberOfBadWords(comment), 1d));
+            features.Add(new Feature<Comment>("Reputation", comment => Math.Log(1d + comment.UserReputation), -1d));
             features.AddRange(BadWordFeature.ContainsIndividualWords());
 
             IList<Comment> comments = new CommentRepository().GetComments();

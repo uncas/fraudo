@@ -32,7 +32,7 @@ namespace Uncas.Sandbox.Fraud
             int numberOfDimensions = dimensions.Count;
 
             // Initial guess at theta:
-            Vector<double> thetas = new DenseVector(numberOfDimensions, 1d);
+            Vector<double> thetas = new DenseVector(dimensions.Select(d => d.GetInitialGuess()).ToArray());
 
             Console.WriteLine("Iterations:");
             for (int iteration = 0; iteration < iterations; iteration++)

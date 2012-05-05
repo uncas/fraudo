@@ -15,10 +15,22 @@ namespace Uncas.Sandbox.Fraud
         {
             get
             {
-                if (Features == null || Features.Length == 0)
+                if (!HasFeatures())
                     return "Empty";
                 return Features.Select(f => f.Name).Aggregate((i, j) => i + " +++ " + j);
             }
+        }
+
+        private bool HasFeatures()
+        {
+            return Features != null && Features.Length > 0;
+        }
+
+        public double GetInitialGuess()
+        {
+            if (!HasFeatures())
+                return 0d;
+            return Features.Sum(f => f.InitialGuess);
         }
     }
 }

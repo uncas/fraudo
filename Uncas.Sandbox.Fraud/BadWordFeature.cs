@@ -42,7 +42,7 @@ namespace Uncas.Sandbox.Fraud
 
         private static Feature<Comment> GetFunc(string word)
         {
-            return new Feature<Comment>("Word: " + word, comment => comment.Text.ToLower().Contains(word) ? 1d : 0d);
+            return new Feature<Comment>("Word: " + word, comment => comment.Text.ToLower().Contains(word) ? 1d : 0d, 1d);
         }
     }
 }
