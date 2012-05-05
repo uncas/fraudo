@@ -88,6 +88,12 @@ namespace Uncas.Sandbox.Fraud
                                        },
                                    new Comment
                                        {
+                                           IsFraud = false,
+                                           UserReputation = 71,
+                                           Text = "I thought I could win a million dollars."
+                                       },
+                                   new Comment
+                                       {
                                            IsFraud = true,
                                            UserReputation = 1,
                                            Text = "Win a million dollars"

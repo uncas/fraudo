@@ -15,7 +15,7 @@ namespace Uncas.Sandbox.Fraud
             features.Add(Feature<Comment>.Null());
             var badWordFeature = new BadWordFeature();
             features.Add(new Feature<Comment>("Bad word", x => badWordFeature.NumberOfBadWords(x)));
-            features.Add(new Feature<Comment>("Reputation", x => x.UserReputation/100d));
+            features.Add(new Feature<Comment>("Reputation", x => Math.Log(1d + x.UserReputation)));
             features.AddRange(BadWordFeature.ContainsIndividualWords());
 
             IList<Comment> comments = new CommentRepository().GetComments();
@@ -27,7 +27,7 @@ namespace Uncas.Sandbox.Fraud
 
             var logisticRegression = new LogisticRegression();
             IList<double> thetas = logisticRegression.Iterate(samples, features, stepSize, iterations);
-            Console.ReadKey();
+            //Console.ReadKey();
         }
 
         private static Sample<Comment> ConvertToSample(
