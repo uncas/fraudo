@@ -11,12 +11,37 @@ namespace Uncas.Sandbox.Fraud
             Identifier = identifier;
             Match = match;
             Features = features.Select(x => x.Value(item)).ToArray();
+
+            var dimensions = new List<double>();
+            dimensions.Add(1d);
+            dimensions.AddRange(Features);
+
+            if (LogisticRegression.UseSecondOrder)
+            {
+                int numberOfFeatures = Features.Length;
+                for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
+                {
+                    for (int featureIndex2 = featureIndex1; featureIndex2 < numberOfFeatures; featureIndex2++)
+                        dimensions.Add(Features[featureIndex1]*Features[featureIndex2]);
+                }
+            }
+
+            Dimensions = dimensions.ToArray();
         }
 
         public T Item { get; private set; }
         public object Identifier { get; private set; }
         public bool Match { get; private set; }
+
+        /// <summary>
+        /// The features of the sample.
+        /// </summary>
         public double[] Features { get; private set; }
+
+        /// <summary>
+        /// The dimensions that we're going to optimize for.
+        /// </summary>
+        public double[] Dimensions { get; set; }
 
         public double Probability { get; set; }
 

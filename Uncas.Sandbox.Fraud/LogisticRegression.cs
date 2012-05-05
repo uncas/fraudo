@@ -8,30 +8,45 @@ namespace Uncas.Sandbox.Fraud
 {
     public class LogisticRegression
     {
+        public static readonly bool UseSecondOrder = true;
+
         public Vector<double> Iterate<T>(
             IList<Sample<T>> samples,
             IList<Feature<T>> features,
             double stepSize,
             int iterations)
         {
-            int numberOfFeatures = samples.First().Features.Length;
+            var dimensions = new List<Dimension<T>>();
+            dimensions.Add(new Dimension<T>());
+            dimensions.AddRange(features.Select(feature => new Dimension<T>(feature)));
+            if (UseSecondOrder)
+            {
+                int numberOfFeatures = features.Count;
+                for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
+                {
+                    for (int featureIndex2 = featureIndex1; featureIndex2 < numberOfFeatures; featureIndex2++)
+                        dimensions.Add(new Dimension<T>(features[featureIndex1], features[featureIndex2]));
+                }
+            }
+
+            int numberOfDimensions = dimensions.Count;
 
             // Initial guess at theta:
-            Vector<double> thetas = new DenseVector(numberOfFeatures, 1d);
+            Vector<double> thetas = new DenseVector(numberOfDimensions, 1d);
 
             Console.WriteLine("Iterations:");
             for (int iteration = 0; iteration < iterations; iteration++)
             {
                 foreach (var sample in samples)
                     sample.Probability = Probability(sample, thetas);
-                var sums = new DenseVector(numberOfFeatures, 0d);
+                var sums = new DenseVector(numberOfDimensions, 0d);
                 foreach (var sample in samples)
                 {
-                    for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
+                    for (int dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
                     {
-                        sums[featureIndex] +=
+                        sums[dimensionIndex] +=
                             (sample.Probability - (sample.Match ? 1 : 0))*
-                            sample.Features[featureIndex];
+                            sample.Dimensions[dimensionIndex];
                     }
                 }
 
@@ -46,12 +61,12 @@ namespace Uncas.Sandbox.Fraud
                 }
             }
 
-            Console.WriteLine("Features and best fit:");
-            for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
+            Console.WriteLine("Dimensions and best fit:");
+            for (int dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
             {
-                double theta = thetas[featureIndex];
-                Feature<T> feature = features[featureIndex];
-                Console.WriteLine("  Theta={1:N3}, Feature: {0}", feature.Name, theta);
+                double theta = thetas[dimensionIndex];
+                Dimension<T> dimension = dimensions[dimensionIndex];
+                Console.WriteLine("  Theta={1:N3}, Feature: {0}", dimension.Description, theta);
             }
 
             const double deviationThreshold = 0.001d;
@@ -77,7 +92,7 @@ namespace Uncas.Sandbox.Fraud
             IEnumerable<double> theta)
         {
             double thetaX =
-                sample.Features.Select((feature, featureIndex) => theta.ElementAt(featureIndex)*feature).Sum();
+                sample.Dimensions.Select((dimension, dimensionIndex) => theta.ElementAt(dimensionIndex)*dimension).Sum();
             return 1d/(1d + Math.Exp(-thetaX));
         }
 

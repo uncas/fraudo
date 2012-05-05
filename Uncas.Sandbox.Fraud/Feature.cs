@@ -12,10 +12,5 @@ namespace Uncas.Sandbox.Fraud
 
         public string Name { get; private set; }
         public Func<T, double> Value { get; private set; }
-
-        public static Feature<T> Null()
-        {
-            return new Feature<T>("Offset", x => 1d);
-        }
     }
 }

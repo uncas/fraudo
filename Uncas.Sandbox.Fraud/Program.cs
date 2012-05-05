@@ -12,7 +12,6 @@ namespace Uncas.Sandbox.Fraud
             const int iterations = 100;
 
             var features = new List<Feature<Comment>>();
-            features.Add(Feature<Comment>.Null());
             var badWordFeature = new BadWordFeature();
             features.Add(new Feature<Comment>("Bad word", comment => badWordFeature.NumberOfBadWords(comment)));
             features.Add(new Feature<Comment>("Reputation", comment => Math.Log(1d + comment.UserReputation)));

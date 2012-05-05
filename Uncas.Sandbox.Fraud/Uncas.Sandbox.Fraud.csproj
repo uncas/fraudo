@@ -55,6 +55,7 @@
     <Compile Include="BadWordFeature.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentRepository.cs" />
+    <Compile Include="Dimension.cs" />
     <Compile Include="Feature.cs" />
     <Compile Include="LogisticRegression.cs" />
     <Compile Include="Program.cs" />
