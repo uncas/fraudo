@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Generic;
 
 namespace Uncas.Sandbox.Fraud
 {
     public class LogisticRegression
     {
-        public IList<double> Iterate<T>(
+        public Vector<double> Iterate<T>(
             IList<Sample<T>> samples,
             IList<Feature<T>> features,
             double stepSize,
@@ -15,16 +17,14 @@ namespace Uncas.Sandbox.Fraud
             int numberOfFeatures = samples.First().Features.Length;
 
             // Initial guess at theta:
-            IList<double> thetas = new List<double>();
-            for (int j = 0; j < numberOfFeatures; j++)
-                thetas.Add(1d);
+            Vector<double> thetas = new DenseVector(numberOfFeatures, 1d);
 
             Console.WriteLine("Iterations:");
             for (int iteration = 0; iteration < iterations; iteration++)
             {
                 foreach (var sample in samples)
                     sample.Probability = Probability(sample, thetas);
-                List<double> sums = thetas.Select(t => 0d).ToList();
+                var sums = new DenseVector(numberOfFeatures, 0d);
                 foreach (var sample in samples)
                 {
                     for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
@@ -35,8 +35,8 @@ namespace Uncas.Sandbox.Fraud
                     }
                 }
 
-                List<double> delta = sums.Select(sum => -stepSize*sum).ToList();
-                thetas = thetas.Select((x, j) => x + delta[j]).ToList();
+                Vector<double> delta = -stepSize*sums;
+                thetas += delta;
 
                 if (iteration == 0 || (iteration + 1)%10 == 0)
                 {

@@ -26,7 +26,7 @@ namespace Uncas.Sandbox.Fraud
                     ToList();
 
             var logisticRegression = new LogisticRegression();
-            IList<double> thetas = logisticRegression.Iterate(samples, features, stepSize, iterations);
+            logisticRegression.Iterate(samples, features, stepSize, iterations);
             Console.ReadKey();
         }
 
