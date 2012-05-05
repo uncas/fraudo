@@ -8,7 +8,7 @@ namespace Uncas.Sandbox.Fraud
     {
         private static void Main()
         {
-            const double alpha = 0.5d;
+            const double stepSize = 0.5d;
             const int iterations = 1000;
 
             var features = new List<Feature<Comment>>();
@@ -47,7 +47,7 @@ namespace Uncas.Sandbox.Fraud
                     }
                 }
 
-                List<double> delta = sums.Select(s => -alpha*s).ToList();
+                List<double> delta = sums.Select(sum => -stepSize*sum).ToList();
                 thetas = thetas.Select((x, j) => x + delta[j]).ToList();
             }
 
@@ -73,9 +73,12 @@ namespace Uncas.Sandbox.Fraud
                 features);
         }
 
-        private static double Probability(Sample<Comment> s, IEnumerable<double> theta)
+        private static double Probability<T>(
+            Sample<T> sample,
+            IEnumerable<double> theta)
         {
-            double thetaX = s.Features.Select((t, i) => theta.ElementAt(i)*t).Sum();
+            double thetaX =
+                sample.Features.Select((feature, featureIndex) => theta.ElementAt(featureIndex)*feature).Sum();
             return 1d/(1d + Math.Exp(-thetaX));
         }
     }
