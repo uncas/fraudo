@@ -14,15 +14,15 @@ namespace Uncas.Sandbox.Fraud
             var features = new List<Feature<Comment>>();
             features.Add(Feature<Comment>.Null());
             var badWordFeature = new BadWordFeature();
-            features.Add(new Feature<Comment>("Bad word", x => badWordFeature.NumberOfBadWords(x)));
-            features.Add(new Feature<Comment>("Reputation", x => Math.Log(1d + x.UserReputation)));
+            features.Add(new Feature<Comment>("Bad word", comment => badWordFeature.NumberOfBadWords(comment)));
+            features.Add(new Feature<Comment>("Reputation", comment => Math.Log(1d + comment.UserReputation)));
             features.AddRange(BadWordFeature.ContainsIndividualWords());
 
             IList<Comment> comments = new CommentRepository().GetComments();
             IList<Sample<Comment>> samples =
                 comments.Select(
-                    c =>
-                    ConvertToSample(c, features)).
+                    comment =>
+                    ConvertToSample(comment, features)).
                     ToList();
 
             var logisticRegression = new LogisticRegression();
