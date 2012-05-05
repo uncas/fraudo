@@ -19,15 +19,25 @@ namespace Uncas.Sandbox.Fraud
             features.AddRange(BadWordFeature.ContainsIndividualWords());
 
             IList<Comment> comments = new CommentRepository().GetComments();
-            IEnumerable<Sample<Comment>> samples =
+            IList<Sample<Comment>> samples =
                 comments.Select(
                     c =>
                     ConvertToSample(c, features)).
                     ToList();
 
+            IList<double> thetas = Iterate(samples, features, stepSize, iterations);
+            Console.ReadKey();
+        }
+
+        private static IList<double> Iterate<T>(
+            IList<Sample<T>> samples,
+            IList<Feature<T>> features,
+            double stepSize,
+            int iterations)
+        {
             int numberOfFeatures = samples.First().Features.Length;
 
-            // Guess at theta
+            // Initial guess at theta:
             IList<double> thetas = new List<double>();
             for (int j = 0; j < numberOfFeatures; j++)
                 thetas.Add(1d);
@@ -54,13 +64,14 @@ namespace Uncas.Sandbox.Fraud
             for (int featureIndex = 0; featureIndex < numberOfFeatures; featureIndex++)
             {
                 double theta = thetas[featureIndex];
-                Feature<Comment> feature = features[featureIndex];
+                Feature<T> feature = features[featureIndex];
                 Console.WriteLine("Theta={1:N3}, Feature: {0}", feature.Name, theta);
             }
 
             foreach (var sample in samples)
                 Console.WriteLine("{0}, {1:P2}", sample.Match, sample.Probability);
-            Console.ReadKey();
+
+            return thetas;
         }
 
         private static Sample<Comment> ConvertToSample(
