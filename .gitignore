@@ -5,3 +5,4 @@ _Resharper*
 packages/
 StyleCop.Cache
 output/
+*~
