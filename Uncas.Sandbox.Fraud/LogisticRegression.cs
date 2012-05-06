@@ -7,11 +7,9 @@ using MathNet.Numerics.LinearAlgebra.Generic;
 
 namespace Uncas.Sandbox.Fraud
 {
-    public class LogisticRegression
+    public class LogisticRegression<T>
     {
-        public static readonly bool UseSecondOrder = true;
-
-        public Vector<double> Iterate<T>(
+        public IList<Dimension<T>> Iterate(
             IList<Sample<T>> samples,
             IList<Feature<T>> features,
             double targetDeviation = 0.005d,
@@ -34,7 +32,10 @@ namespace Uncas.Sandbox.Fraud
 
             OutputBestFit(dimensions, thetas);
             OutputDeviations(samples, targetDeviation);
-            return thetas;
+            foreach (var dimension in dimensions)
+                dimension.Theta = thetas.ElementAt(dimensions.IndexOf(dimension));
+
+            return dimensions;
         }
 
         private static Vector<double> GradientDescent<T>(
@@ -112,7 +113,7 @@ namespace Uncas.Sandbox.Fraud
             // First order:
             dimensions.AddRange(features.Select(feature => new Dimension<T>(feature)));
 
-            if (!UseSecondOrder)
+            if (!Program.UseSecondOrder)
                 return dimensions;
 
             // Second order:

@@ -10,6 +10,7 @@ namespace Uncas.Sandbox.Fraud
         }
 
         public Feature<T>[] Features { get; private set; }
+        public double Theta { get; set; }
 
         public string Description
         {
@@ -21,16 +22,16 @@ namespace Uncas.Sandbox.Fraud
             }
         }
 
-        private bool HasFeatures()
-        {
-            return Features != null && Features.Length > 0;
-        }
-
         public double GetInitialGuess()
         {
             if (!HasFeatures())
                 return 0d;
             return Features.Sum(f => f.InitialGuess);
+        }
+
+        private bool HasFeatures()
+        {
+            return Features != null && Features.Length > 0;
         }
     }
 }

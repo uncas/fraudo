@@ -15,7 +15,7 @@ namespace Uncas.Sandbox.Fraud
             Features = features.Select(x => x.Value(item)).ToArray();
             var dimensions = new List<double> {1d};
             dimensions.AddRange(Features);
-            if (LogisticRegression.UseSecondOrder)
+            if (Program.UseSecondOrder)
             {
                 int numberOfFeatures = Features.Length;
                 for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
