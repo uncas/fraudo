@@ -1,4 +1,5 @@
 using System.Linq;
+using Uncas.Fraudo;
 
 namespace Uncas.Sandbox.Fraud
 {

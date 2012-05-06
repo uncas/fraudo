@@ -1,6 +1,6 @@
 using System;
 
-namespace Uncas.Sandbox.Fraud
+namespace Uncas.Fraudo
 {
     public class Feature<T>
     {
