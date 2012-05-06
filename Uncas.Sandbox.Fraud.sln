@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uncas.Sandbox.Fraud", "Uncas.Sandbox.Fraud\Uncas.Sandbox.Fraud.csproj", "{520C2F35-4055-459C-BE28-03F5DC79A08A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uncas.Sandbox.Fraud", "src\Uncas.Sandbox.Fraud\Uncas.Sandbox.Fraud.csproj", "{520C2F35-4055-459C-BE28-03F5DC79A08A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uncas.Fraudo", "Uncas.Fraudo\Uncas.Fraudo.csproj", "{F94997FF-F08A-4B01-9905-ADD8BEBC8A78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uncas.Fraudo", "src\Uncas.Fraudo\Uncas.Fraudo.csproj", "{F94997FF-F08A-4B01-9905-ADD8BEBC8A78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
