@@ -55,12 +55,13 @@ namespace Uncas.Sandbox.Fraud
 
         private static double GetDeviation<T>(IList<Sample<T>> samples)
         {
-            double deviationSquared = samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
-            double deviation = Math.Sqrt(deviationSquared/samples.Count);
-            return deviation;
+            double deviationSquared =
+                samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
+            return Math.Sqrt(deviationSquared/samples.Count);
         }
 
-        private static Vector<double> GetInitialGuessAtTheta<T>(IEnumerable<Dimension<T>> dimensions)
+        private static Vector<double> GetInitialGuessAtTheta<T>(
+            IEnumerable<Dimension<T>> dimensions)
         {
             return new DenseVector(dimensions.Select(d => d.GetInitialGuess()).ToArray());
         }
@@ -72,6 +73,7 @@ namespace Uncas.Sandbox.Fraud
             double deviationThreshold = targetDeviation/2d;
             IEnumerable<Sample<T>> deviatingSamples =
                 samples.Where(x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
+
             if (!deviatingSamples.Any())
                 return;
 
