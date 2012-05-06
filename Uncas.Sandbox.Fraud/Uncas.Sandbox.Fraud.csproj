@@ -56,7 +56,6 @@
     <Compile Include="Comment.cs" />
     <Compile Include="CommentRepository.cs" />
     <Compile Include="Dimension.cs" />
-    <Compile Include="Feature.cs" />
     <Compile Include="LogisticRegression.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +68,12 @@
     <Content Include="App_Readme\MathNet.Numerics.authors.txt" />
     <Content Include="App_Readme\MathNet.Numerics.copyright.txt" />
     <Content Include="App_Readme\MathNet.Numerics.readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Uncas.Fraudo\Uncas.Fraudo.csproj">
+      <Project>{F94997FF-F08A-4B01-9905-ADD8BEBC8A78}</Project>
+      <Name>Uncas.Fraudo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
