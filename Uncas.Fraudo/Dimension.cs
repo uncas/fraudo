@@ -1,7 +1,6 @@
 using System.Linq;
-using Uncas.Fraudo;
 
-namespace Uncas.Sandbox.Fraud
+namespace Uncas.Fraudo
 {
     public class Dimension<T>
     {
