@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Generic;
 
 namespace Uncas.Sandbox.Fraud
 {
@@ -11,11 +13,8 @@ namespace Uncas.Sandbox.Fraud
             Identifier = identifier;
             Match = match;
             Features = features.Select(x => x.Value(item)).ToArray();
-
-            var dimensions = new List<double>();
-            dimensions.Add(1d);
+            var dimensions = new List<double> {1d};
             dimensions.AddRange(Features);
-
             if (LogisticRegression.UseSecondOrder)
             {
                 int numberOfFeatures = Features.Length;
@@ -26,7 +25,7 @@ namespace Uncas.Sandbox.Fraud
                 }
             }
 
-            Dimensions = dimensions.ToArray();
+            Dimensions = new DenseVector(dimensions.ToArray());
         }
 
         public T Item { get; private set; }
@@ -41,7 +40,7 @@ namespace Uncas.Sandbox.Fraud
         /// <summary>
         /// The dimensions that we're going to optimize for.
         /// </summary>
-        public double[] Dimensions { get; set; }
+        public Vector<double> Dimensions { get; set; }
 
         public double Probability { get; set; }
 
