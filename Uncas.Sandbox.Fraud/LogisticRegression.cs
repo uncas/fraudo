@@ -49,7 +49,7 @@ namespace Uncas.Sandbox.Fraud
             Console.WriteLine("  {0}: standard deviation={1:P3}", iteration + 1, deviation);
         }
 
-        private static Vector<double> GetInitialGuessAtTheta<T>(List<Dimension<T>> dimensions)
+        private static Vector<double> GetInitialGuessAtTheta<T>(IEnumerable<Dimension<T>> dimensions)
         {
             Vector<double> thetas = new DenseVector(dimensions.Select(d => d.GetInitialGuess()).ToArray());
             return thetas;
