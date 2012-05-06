@@ -12,9 +12,9 @@ namespace Uncas.Sandbox.Fraud
         public IList<Dimension<T>> Iterate(
             IList<Sample<T>> samples,
             IList<Feature<T>> features,
-            double targetDeviation = 0.005d,
+            double targetDeviation = 0.001d,
             double stepSize = 0.5d,
-            int maxIterations = 1000)
+            int maxIterations = 10000)
         {
             IList<Dimension<T>> dimensions = GetDimensions(features);
             Vector<double> thetas = GetInitialGuessAtTheta(dimensions);
