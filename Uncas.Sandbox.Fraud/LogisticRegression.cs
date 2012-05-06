@@ -14,24 +14,33 @@ namespace Uncas.Sandbox.Fraud
         public Vector<double> Iterate<T>(
             IList<Sample<T>> samples,
             IList<Feature<T>> features,
-            double stepSize,
-            int iterations)
+            double targetDeviation = 0.005d,
+            double stepSize = 0.5d,
+            int maxIterations = 1000)
         {
             IList<Dimension<T>> dimensions = GetDimensions(features);
             Vector<double> thetas = GetInitialGuessAtTheta(dimensions);
-            Console.WriteLine("Iterations:");
-            for (int iteration = 0; iteration < iterations; iteration++)
-                thetas = GradientDescent(samples, thetas, stepSize, iteration);
+            Console.WriteLine("Iterations to achieve deviation {0:P}:", targetDeviation);
+            for (int iteration = 0; iteration < maxIterations; iteration++)
+            {
+                thetas = GradientDescent(samples, thetas, stepSize);
+                double deviation = GetDeviation(samples);
+                bool breakIteration = deviation < targetDeviation;
+                if (iteration == 0 || (iteration + 1)%10 == 0 || breakIteration)
+                    Console.WriteLine("  {0}: standard deviation={1:P3}", iteration + 1, deviation);
+                if (breakIteration)
+                    break;
+            }
+
             OutputBestFit(dimensions, thetas);
-            OutputDeviations(samples);
+            OutputDeviations(samples, targetDeviation);
             return thetas;
         }
 
         private static Vector<double> GradientDescent<T>(
-            IList<Sample<T>> samples,
+            IEnumerable<Sample<T>> samples,
             Vector<double> thetas,
-            double stepSize,
-            int iteration)
+            double stepSize)
         {
             Vector<double> sums = new DenseVector(thetas.Count, 0d);
             foreach (var sample in samples)
@@ -42,16 +51,14 @@ namespace Uncas.Sandbox.Fraud
             }
 
             thetas += -stepSize*sums;
-            if (iteration == 0 || (iteration + 1)%10 == 0)
-                OutputTotalDeviationAtIteration(samples, iteration);
             return thetas;
         }
 
-        private static void OutputTotalDeviationAtIteration<T>(IList<Sample<T>> samples, int iteration)
+        private static double GetDeviation<T>(IList<Sample<T>> samples)
         {
-            double deviationSquared = samples.Select(s => Math.Pow(s.Deviation, 2d)).Sum();
+            double deviationSquared = samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
             double deviation = Math.Sqrt(deviationSquared/samples.Count);
-            Console.WriteLine("  {0}: standard deviation={1:P3}", iteration + 1, deviation);
+            return deviation;
         }
 
         private static Vector<double> GetInitialGuessAtTheta<T>(IEnumerable<Dimension<T>> dimensions)
@@ -59,15 +66,17 @@ namespace Uncas.Sandbox.Fraud
             return new DenseVector(dimensions.Select(d => d.GetInitialGuess()).ToArray());
         }
 
-        private static void OutputDeviations<T>(IEnumerable<Sample<T>> samples)
+        private static void OutputDeviations<T>(
+            IEnumerable<Sample<T>> samples,
+            double targetDeviation)
         {
-            const double deviationThreshold = 0.001d;
+            double deviationThreshold = targetDeviation/2d;
             IEnumerable<Sample<T>> deviatingSamples =
                 samples.Where(x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
             if (!deviatingSamples.Any())
                 return;
 
-            Console.WriteLine("Deviations above {0:P1}:", deviationThreshold);
+            Console.WriteLine("Deviations above {0:P}:", deviationThreshold);
             foreach (var sample in deviatingSamples.OrderByDescending(x => Math.Abs(x.Deviation)))
                 Console.WriteLine(
                     "  {0}, {1:P2}, {2:P2}, {3}",
@@ -92,7 +101,9 @@ namespace Uncas.Sandbox.Fraud
 
         private static IList<Dimension<T>> GetDimensions<T>(IList<Feature<T>> features)
         {
+// ReSharper disable UseObjectOrCollectionInitializer
             var dimensions = new List<Dimension<T>>();
+// ReSharper restore UseObjectOrCollectionInitializer
 
             // Zeroth order:
             dimensions.Add(new Dimension<T>());

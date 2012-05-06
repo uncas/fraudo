@@ -9,9 +9,6 @@ namespace Uncas.Sandbox.Fraud
     {
         private static void Main()
         {
-            const double stepSize = 0.5d;
-            const int iterations = 100;
-
             var features = new List<Feature<Comment>>();
             var badWordFeature = new BadWordFeature();
             features.Add(new Feature<Comment>("Bad word", comment => badWordFeature.NumberOfBadWords(comment), 1d));
@@ -28,7 +25,7 @@ namespace Uncas.Sandbox.Fraud
             var logisticRegression = new LogisticRegression();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            logisticRegression.Iterate(samples, features, stepSize, iterations);
+            logisticRegression.Iterate(samples, features);
             stopwatch.Stop();
             Console.WriteLine("Duration: {0:N4} seconds", stopwatch.Elapsed.TotalSeconds);
             Console.ReadKey();
