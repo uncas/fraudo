@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Generic;
 
@@ -16,8 +17,7 @@ namespace Uncas.Sandbox.Fraud
             double stepSize,
             int iterations)
         {
-            var dimensions = new List<Dimension<T>>();
-            dimensions.Add(new Dimension<T>());
+            var dimensions = new List<Dimension<T>> {new Dimension<T>()};
             dimensions.AddRange(features.Select(feature => new Dimension<T>(feature)));
             if (UseSecondOrder)
             {
@@ -93,22 +93,7 @@ namespace Uncas.Sandbox.Fraud
         {
             double thetaX =
                 sample.Dimensions.Select((dimension, dimensionIndex) => theta.ElementAt(dimensionIndex)*dimension).Sum();
-            return 1d/(1d + Math.Exp(-thetaX));
-        }
-
-        private static double Cost<T>(
-            IList<Sample<T>> samples,
-            IList<double> theta)
-        {
-            double cost = 0d;
-            foreach (var sample in samples)
-            {
-                double y = sample.Match ? 1d : 0d;
-                double h = Probability(sample, theta);
-                cost += -y*Math.Log(h) - (1 - y)*Math.Log(1 - h);
-            }
-
-            return cost/samples.Count;
+            return SpecialFunctions.Logistic(thetaX);
         }
     }
 }
