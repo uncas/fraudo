@@ -4,3 +4,4 @@ obj/
 _Resharper*
 packages/
 StyleCop.Cache
+output/
