@@ -38,7 +38,7 @@ namespace Uncas.Sandbox.Fraud
             return dimensions;
         }
 
-        private static Vector<double> GradientDescent<T>(
+        private static Vector<double> GradientDescent(
             IEnumerable<Sample<T>> samples,
             Vector<double> thetas,
             double stepSize)
@@ -54,20 +54,20 @@ namespace Uncas.Sandbox.Fraud
             return thetas;
         }
 
-        private static double GetDeviation<T>(IList<Sample<T>> samples)
+        private static double GetDeviation(IList<Sample<T>> samples)
         {
             double deviationSquared =
                 samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
             return Math.Sqrt(deviationSquared/samples.Count);
         }
 
-        private static Vector<double> GetInitialGuessAtTheta<T>(
+        private static Vector<double> GetInitialGuessAtTheta(
             IEnumerable<Dimension<T>> dimensions)
         {
             return new DenseVector(dimensions.Select(d => d.GetInitialGuess()).ToArray());
         }
 
-        private static void OutputDeviations<T>(
+        private static void OutputDeviations(
             IEnumerable<Sample<T>> samples,
             double targetDeviation)
         {
@@ -88,7 +88,7 @@ namespace Uncas.Sandbox.Fraud
                     sample.Identifier);
         }
 
-        private static void OutputBestFit<T>(
+        private static void OutputBestFit(
             IList<Dimension<T>> dimensions,
             Vector<double> thetas)
         {
@@ -101,7 +101,7 @@ namespace Uncas.Sandbox.Fraud
             }
         }
 
-        private static IList<Dimension<T>> GetDimensions<T>(IList<Feature<T>> features)
+        private static IList<Dimension<T>> GetDimensions(IList<Feature<T>> features)
         {
 // ReSharper disable UseObjectOrCollectionInitializer
             var dimensions = new List<Dimension<T>>();
@@ -127,7 +127,7 @@ namespace Uncas.Sandbox.Fraud
             return dimensions;
         }
 
-        private static double GetProbability<T>(
+        private static double GetProbability(
             Sample<T> sample,
             Vector<double> theta)
         {
