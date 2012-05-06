@@ -46,8 +46,7 @@ namespace Uncas.Sandbox.Fraud
             foreach (var sample in samples)
             {
                 sample.Probability = GetProbability(sample, thetas);
-                double deviation = sample.Probability - (sample.Match ? 1d : 0d);
-                sums += deviation*sample.Dimensions;
+                sums += sample.Deviation*sample.Dimensions;
             }
 
             thetas += -stepSize*sums;

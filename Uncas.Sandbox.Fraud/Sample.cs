@@ -51,7 +51,7 @@ namespace Uncas.Sandbox.Fraud
 
         public double Deviation
         {
-            get { return Actual - Probability; }
+            get { return Probability - Actual; }
         }
 
         public override string ToString()
