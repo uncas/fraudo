@@ -4,7 +4,10 @@ namespace Uncas.Fraudo
 {
     public class Feature<T>
     {
-        public Feature(string name, Func<T, double> value, double initialGuess = 0d)
+        public Feature(
+            string name,
+            Func<T, double> value,
+            double initialGuess = 0d)
         {
             Name = name;
             Value = value;
