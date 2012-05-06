@@ -8,7 +8,11 @@ namespace Uncas.Sandbox.Fraud
 {
     public class Sample<T>
     {
-        public Sample(T item, object identifier, bool match, IEnumerable<Feature<T>> features)
+        public Sample(
+            T item, 
+            object identifier, 
+            bool match, 
+            IEnumerable<Feature<T>> features)
         {
             Item = item;
             Identifier = identifier;
@@ -19,10 +23,15 @@ namespace Uncas.Sandbox.Fraud
             if (Program.UseSecondOrder)
             {
                 int numberOfFeatures = Features.Length;
-                for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
+                for (int featureIndex1 = 0; 
+                    featureIndex1 < numberOfFeatures;
+                    featureIndex1++)
                 {
-                    for (int featureIndex2 = featureIndex1; featureIndex2 < numberOfFeatures; featureIndex2++)
-                        dimensions.Add(Features[featureIndex1]*Features[featureIndex2]);
+                    for (int featureIndex2 = featureIndex1; 
+                        featureIndex2 < numberOfFeatures;
+                        featureIndex2++)
+                        dimensions.Add(
+                            Features[featureIndex1]*Features[featureIndex2]);
                 }
             }
 

@@ -19,14 +19,19 @@ namespace Uncas.Sandbox.Fraud
         {
             IList<Dimension<T>> dimensions = GetDimensions(features);
             Vector<double> thetas = GetInitialGuessAtTheta(dimensions);
-            Console.WriteLine("Iterations to achieve deviation {0:P}:", targetDeviation);
+            Console.WriteLine(
+                "Iterations to achieve deviation {0:P}:",
+                targetDeviation);
             for (int iteration = 0; iteration < maxIterations; iteration++)
             {
                 thetas = GradientDescent(samples, thetas, stepSize);
                 double deviation = GetDeviation(samples);
                 bool breakIteration = deviation < targetDeviation;
                 if (iteration == 0 || (iteration + 1)%10 == 0 || breakIteration)
-                    Console.WriteLine("  {0}: standard deviation={1:P3}", iteration + 1, deviation);
+                    Console.WriteLine(
+                        "  {0}: standard deviation={1:P3}",
+                        iteration + 1,
+                        deviation);
                 if (breakIteration)
                     break;
             }
@@ -65,7 +70,8 @@ namespace Uncas.Sandbox.Fraud
         private static Vector<double> GetInitialGuessAtTheta(
             IEnumerable<Dimension<T>> dimensions)
         {
-            return new DenseVector(dimensions.Select(d => d.GetInitialGuess()).ToArray());
+            return new DenseVector(
+                dimensions.Select(d => d.GetInitialGuess()).ToArray());
         }
 
         private static void OutputDeviations(
@@ -74,13 +80,15 @@ namespace Uncas.Sandbox.Fraud
         {
             double deviationThreshold = targetDeviation/2d;
             IEnumerable<Sample<T>> deviatingSamples =
-                samples.Where(x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
+                samples.Where(
+                x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
 
             if (!deviatingSamples.Any())
                 return;
 
             Console.WriteLine("Deviations above {0:P}:", deviationThreshold);
-            foreach (var sample in deviatingSamples.OrderByDescending(x => Math.Abs(x.Deviation)))
+            foreach (var sample in deviatingSamples.OrderByDescending(
+                x => Math.Abs(x.Deviation)))
                 Console.WriteLine(
                     "  {0}, {1:P2}, {2:P2}, {3}",
                     sample.Match,
@@ -94,11 +102,16 @@ namespace Uncas.Sandbox.Fraud
             Vector<double> thetas)
         {
             Console.WriteLine("Dimensions and best fit:");
-            for (int dimensionIndex = 0; dimensionIndex < dimensions.Count; dimensionIndex++)
+            for (int dimensionIndex = 0; 
+                dimensionIndex < dimensions.Count;
+                dimensionIndex++)
             {
                 double theta = thetas[dimensionIndex];
                 Dimension<T> dimension = dimensions[dimensionIndex];
-                Console.WriteLine("  Theta={1:N3}, Feature: {0}", dimension.Description, theta);
+                Console.WriteLine(
+                    "  Theta={1:N3}, Feature: {0}", 
+                    dimension.Description,
+                    theta);
             }
         }
 
@@ -112,17 +125,23 @@ namespace Uncas.Sandbox.Fraud
             dimensions.Add(new Dimension<T>());
 
             // First order:
-            dimensions.AddRange(features.Select(feature => new Dimension<T>(feature)));
+            dimensions.AddRange(
+                features.Select(feature => new Dimension<T>(feature)));
 
             if (!Program.UseSecondOrder)
                 return dimensions;
 
             // Second order:
             int numberOfFeatures = features.Count;
-            for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
+            for (int featureIndex1 = 0;
+                featureIndex1 < numberOfFeatures; 
+                featureIndex1++)
             {
-                for (int featureIndex2 = featureIndex1; featureIndex2 < numberOfFeatures; featureIndex2++)
-                    dimensions.Add(new Dimension<T>(features[featureIndex1], features[featureIndex2]));
+                for (int featureIndex2 = featureIndex1;
+                    featureIndex2 < numberOfFeatures;
+                    featureIndex2++)
+                    dimensions.Add(
+                        new Dimension<T>(features[featureIndex1], features[featureIndex2]));
             }
 
             return dimensions;
