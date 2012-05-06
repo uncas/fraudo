@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Generic;
-using Uncas.Fraudo;
 
-namespace Uncas.Sandbox.Fraud
+namespace Uncas.Fraudo
 {
     public class Sample<T>
     {
