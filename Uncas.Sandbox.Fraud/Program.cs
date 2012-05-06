@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Uncas.Sandbox.Fraud
@@ -25,7 +26,11 @@ namespace Uncas.Sandbox.Fraud
                     ToList();
 
             var logisticRegression = new LogisticRegression();
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             logisticRegression.Iterate(samples, features, stepSize, iterations);
+            stopwatch.Stop();
+            Console.WriteLine("Duration: {0:N4} seconds", stopwatch.Elapsed.TotalSeconds);
             Console.ReadKey();
         }
 

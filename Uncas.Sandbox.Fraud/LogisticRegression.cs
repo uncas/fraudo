@@ -118,8 +118,7 @@ namespace Uncas.Sandbox.Fraud
             Sample<T> sample,
             Vector<double> theta)
         {
-            double thetaX =
-                sample.Dimensions.Select((dimension, dimensionIndex) => theta.ElementAt(dimensionIndex)*dimension).Sum();
+            double thetaX = sample.Dimensions.DotProduct(theta);
             return SpecialFunctions.Logistic(thetaX);
         }
     }
