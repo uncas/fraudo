@@ -36,9 +36,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\packages\MathNet.Numerics.2.1.2\lib\Net40\MathNet.Numerics.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -47,9 +44,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="zlib.net">
-      <HintPath>..\packages\zlib.net.1.0.3.0\lib\zlib.net.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BadWordFeature.cs" />
@@ -60,11 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_Readme\MathNet.Numerics.authors.txt" />
-    <Content Include="App_Readme\MathNet.Numerics.copyright.txt" />
-    <Content Include="App_Readme\MathNet.Numerics.readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Uncas.Fraudo\Uncas.Fraudo.csproj">
