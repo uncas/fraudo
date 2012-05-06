@@ -18,26 +18,32 @@ namespace Uncas.Sandbox.Fraud
             int iterations)
         {
             IList<Dimension<T>> dimensions = GetDimensions(features);
-            int numberOfDimensions = dimensions.Count;
             Vector<double> thetas = GetInitialGuessAtTheta(dimensions);
             Console.WriteLine("Iterations:");
             for (int iteration = 0; iteration < iterations; iteration++)
-            {
-                Vector<double> sums = new DenseVector(numberOfDimensions, 0d);
-                foreach (var sample in samples)
-                {
-                    sample.Probability = GetProbability(sample, thetas);
-                    double deviation = sample.Probability - (sample.Match ? 1d : 0d);
-                    sums += deviation*sample.Dimensions;
-                }
+                thetas = GradientDescent(samples, thetas, stepSize, iteration);
+            OutputBestFit(dimensions, thetas);
+            OutputDeviations(samples);
+            return thetas;
+        }
 
-                thetas += -stepSize*sums;
-                if (iteration == 0 || (iteration + 1)%10 == 0)
-                    OutputTotalDeviationAtIteration(samples, iteration);
+        private static Vector<double> GradientDescent<T>(
+            IList<Sample<T>> samples,
+            Vector<double> thetas,
+            double stepSize,
+            int iteration)
+        {
+            Vector<double> sums = new DenseVector(thetas.Count, 0d);
+            foreach (var sample in samples)
+            {
+                sample.Probability = GetProbability(sample, thetas);
+                double deviation = sample.Probability - (sample.Match ? 1d : 0d);
+                sums += deviation*sample.Dimensions;
             }
 
-            OutputBestFit(dimensions, thetas, numberOfDimensions);
-            OutputDeviations(samples);
+            thetas += -stepSize*sums;
+            if (iteration == 0 || (iteration + 1)%10 == 0)
+                OutputTotalDeviationAtIteration(samples, iteration);
             return thetas;
         }
 
@@ -58,26 +64,25 @@ namespace Uncas.Sandbox.Fraud
             const double deviationThreshold = 0.001d;
             IEnumerable<Sample<T>> deviatingSamples =
                 samples.Where(x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
-            if (deviatingSamples.Any())
-            {
-                Console.WriteLine("Deviations above {0:P1}:", deviationThreshold);
-                foreach (var sample in deviatingSamples.OrderByDescending(x => Math.Abs(x.Deviation)))
-                    Console.WriteLine(
-                        "  {0}, {1:P2}, {2:P2}, {3}",
-                        sample.Match,
-                        sample.Probability,
-                        sample.Deviation,
-                        sample.Identifier);
-            }
+            if (!deviatingSamples.Any())
+                return;
+
+            Console.WriteLine("Deviations above {0:P1}:", deviationThreshold);
+            foreach (var sample in deviatingSamples.OrderByDescending(x => Math.Abs(x.Deviation)))
+                Console.WriteLine(
+                    "  {0}, {1:P2}, {2:P2}, {3}",
+                    sample.Match,
+                    sample.Probability,
+                    sample.Deviation,
+                    sample.Identifier);
         }
 
         private static void OutputBestFit<T>(
             IList<Dimension<T>> dimensions,
-            Vector<double> thetas,
-            int numberOfDimensions)
+            Vector<double> thetas)
         {
             Console.WriteLine("Dimensions and best fit:");
-            for (int dimensionIndex = 0; dimensionIndex < numberOfDimensions; dimensionIndex++)
+            for (int dimensionIndex = 0; dimensionIndex < dimensions.Count; dimensionIndex++)
             {
                 double theta = thetas[dimensionIndex];
                 Dimension<T> dimension = dimensions[dimensionIndex];
@@ -87,16 +92,23 @@ namespace Uncas.Sandbox.Fraud
 
         private static IList<Dimension<T>> GetDimensions<T>(IList<Feature<T>> features)
         {
-            var dimensions = new List<Dimension<T>> {new Dimension<T>()};
+            var dimensions = new List<Dimension<T>>();
+
+            // Zeroth order:
+            dimensions.Add(new Dimension<T>());
+
+            // First order:
             dimensions.AddRange(features.Select(feature => new Dimension<T>(feature)));
-            if (UseSecondOrder)
+
+            if (!UseSecondOrder)
+                return dimensions;
+
+            // Second order:
+            int numberOfFeatures = features.Count;
+            for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
             {
-                int numberOfFeatures = features.Count;
-                for (int featureIndex1 = 0; featureIndex1 < numberOfFeatures; featureIndex1++)
-                {
-                    for (int featureIndex2 = featureIndex1; featureIndex2 < numberOfFeatures; featureIndex2++)
-                        dimensions.Add(new Dimension<T>(features[featureIndex1], features[featureIndex2]));
-                }
+                for (int featureIndex2 = featureIndex1; featureIndex2 < numberOfFeatures; featureIndex2++)
+                    dimensions.Add(new Dimension<T>(features[featureIndex1], features[featureIndex2]));
             }
 
             return dimensions;
@@ -104,7 +116,7 @@ namespace Uncas.Sandbox.Fraud
 
         private static double GetProbability<T>(
             Sample<T> sample,
-            IEnumerable<double> theta)
+            Vector<double> theta)
         {
             double thetaX =
                 sample.Dimensions.Select((dimension, dimensionIndex) => theta.ElementAt(dimensionIndex)*dimension).Sum();
