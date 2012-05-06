@@ -10,6 +10,13 @@ namespace Uncas.Sandbox.Fraud
 {
     public class LogisticRegression<T>
     {
+        private readonly bool _useSecondOrder;
+
+        public LogisticRegression(bool useSecondOrder)
+        {
+            _useSecondOrder = useSecondOrder;
+        }
+
         public IList<Dimension<T>> Iterate(
             IList<Sample<T>> samples,
             IList<Feature<T>> features,
@@ -27,7 +34,7 @@ namespace Uncas.Sandbox.Fraud
                 thetas = GradientDescent(samples, thetas, stepSize);
                 double deviation = GetDeviation(samples);
                 bool breakIteration = deviation < targetDeviation;
-                if (iteration == 0 || (iteration + 1)%10 == 0 || breakIteration)
+                if (iteration == 0 || (iteration + 1) % 10 == 0 || breakIteration)
                     Console.WriteLine(
                         "  {0}: standard deviation={1:P3}",
                         iteration + 1,
@@ -53,10 +60,10 @@ namespace Uncas.Sandbox.Fraud
             foreach (var sample in samples)
             {
                 sample.Probability = GetProbability(sample, thetas);
-                sums += sample.Deviation*sample.Dimensions;
+                sums += sample.Deviation * sample.Dimensions;
             }
 
-            thetas += -stepSize*sums;
+            thetas += -stepSize * sums;
             return thetas;
         }
 
@@ -64,7 +71,7 @@ namespace Uncas.Sandbox.Fraud
         {
             double deviationSquared =
                 samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
-            return Math.Sqrt(deviationSquared/samples.Count);
+            return Math.Sqrt(deviationSquared / samples.Count);
         }
 
         private static Vector<double> GetInitialGuessAtTheta(
@@ -78,7 +85,7 @@ namespace Uncas.Sandbox.Fraud
             IEnumerable<Sample<T>> samples,
             double targetDeviation)
         {
-            double deviationThreshold = targetDeviation/2d;
+            double deviationThreshold = targetDeviation / 2d;
             IEnumerable<Sample<T>> deviatingSamples =
                 samples.Where(
                 x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
@@ -102,24 +109,24 @@ namespace Uncas.Sandbox.Fraud
             Vector<double> thetas)
         {
             Console.WriteLine("Dimensions and best fit:");
-            for (int dimensionIndex = 0; 
+            for (int dimensionIndex = 0;
                 dimensionIndex < dimensions.Count;
                 dimensionIndex++)
             {
                 double theta = thetas[dimensionIndex];
                 Dimension<T> dimension = dimensions[dimensionIndex];
                 Console.WriteLine(
-                    "  Theta={1:N3}, Feature: {0}", 
+                    "  Theta={1:N3}, Feature: {0}",
                     dimension.Description,
                     theta);
             }
         }
 
-        private static IList<Dimension<T>> GetDimensions(IList<Feature<T>> features)
+        private IList<Dimension<T>> GetDimensions(IList<Feature<T>> features)
         {
-// ReSharper disable UseObjectOrCollectionInitializer
+            // ReSharper disable UseObjectOrCollectionInitializer
             var dimensions = new List<Dimension<T>>();
-// ReSharper restore UseObjectOrCollectionInitializer
+            // ReSharper restore UseObjectOrCollectionInitializer
 
             // Zeroth order:
             dimensions.Add(new Dimension<T>());
@@ -128,13 +135,13 @@ namespace Uncas.Sandbox.Fraud
             dimensions.AddRange(
                 features.Select(feature => new Dimension<T>(feature)));
 
-            if (!Program.UseSecondOrder)
+            if (!_useSecondOrder)
                 return dimensions;
 
             // Second order:
             int numberOfFeatures = features.Count;
             for (int featureIndex1 = 0;
-                featureIndex1 < numberOfFeatures; 
+                featureIndex1 < numberOfFeatures;
                 featureIndex1++)
             {
                 for (int featureIndex2 = featureIndex1;

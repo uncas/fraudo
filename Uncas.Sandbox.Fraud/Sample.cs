@@ -12,7 +12,8 @@ namespace Uncas.Sandbox.Fraud
             T item, 
             object identifier, 
             bool match, 
-            IEnumerable<Feature<T>> features)
+            IEnumerable<Feature<T>> features,
+            bool useSecondOrder)
         {
             Item = item;
             Identifier = identifier;
@@ -20,7 +21,7 @@ namespace Uncas.Sandbox.Fraud
             Features = features.Select(x => x.Value(item)).ToArray();
             var dimensions = new List<double> {1d};
             dimensions.AddRange(Features);
-            if (Program.UseSecondOrder)
+            if (useSecondOrder)
             {
                 int numberOfFeatures = Features.Length;
                 for (int featureIndex1 = 0; 

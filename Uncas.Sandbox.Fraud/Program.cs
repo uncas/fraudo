@@ -8,7 +8,7 @@ namespace Uncas.Sandbox.Fraud
 {
     public class Program
     {
-        public static readonly bool UseSecondOrder = true;
+        private const bool UseSecondOrder = true;
 
         private static void Main()
         {
@@ -24,8 +24,7 @@ namespace Uncas.Sandbox.Fraud
                     comment =>
                     ConvertToSample(comment, features)).
                     ToList();
-
-            var logisticRegression = new LogisticRegression<Comment>();
+            var logisticRegression = new LogisticRegression<Comment>(UseSecondOrder);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             logisticRegression.Iterate(samples, features);
@@ -42,7 +41,8 @@ namespace Uncas.Sandbox.Fraud
                 comment,
                 comment.Text,
                 comment.IsFraud,
-                features);
+                features,
+                UseSecondOrder);
         }
     }
 }
