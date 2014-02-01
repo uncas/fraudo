@@ -8,6 +8,10 @@ namespace Uncas.Fraudo
 {
     public class Sample<T>
     {
+        private readonly Vector<double> _dimensions;
+        private readonly object _identifier;
+        private readonly bool _match;
+
         public Sample(
             T item,
             object identifier,
@@ -15,14 +19,14 @@ namespace Uncas.Fraudo
             IEnumerable<Feature<T>> features,
             bool useSecondOrder)
         {
-            Identifier = identifier;
-            Match = match;
-            Features = features.Select(x => x.Value(item)).ToArray();
+            _identifier = identifier;
+            _match = match;
+            double[] featureValues = features.Select(x => x.Value(item)).ToArray();
             var dimensions = new List<double> {1d};
-            dimensions.AddRange(Features);
+            dimensions.AddRange(featureValues);
             if (useSecondOrder)
             {
-                int numberOfFeatures = Features.Length;
+                int numberOfFeatures = featureValues.Length;
                 for (int featureIndex1 = 0;
                     featureIndex1 < numberOfFeatures;
                     featureIndex1++)
@@ -31,25 +35,30 @@ namespace Uncas.Fraudo
                         featureIndex2 < numberOfFeatures;
                         featureIndex2++)
                         dimensions.Add(
-                            Features[featureIndex1]*Features[featureIndex2]);
+                            featureValues[featureIndex1]*featureValues[featureIndex2]);
                 }
             }
 
-            Dimensions = new DenseVector(dimensions.ToArray());
+            _dimensions = new DenseVector(dimensions.ToArray());
         }
 
-        public object Identifier { get; private set; }
-        public bool Match { get; private set; }
+        public object Identifier
+        {
+            get { return _identifier; }
+        }
 
-        /// <summary>
-        ///     The features of the sample.
-        /// </summary>
-        public double[] Features { get; private set; }
+        public bool Match
+        {
+            get { return _match; }
+        }
 
         /// <summary>
         ///     The dimensions that we're going to optimize for.
         /// </summary>
-        public Vector<double> Dimensions { get; private set; }
+        public Vector<double> Dimensions
+        {
+            get { return _dimensions; }
+        }
 
         public double Probability { get; set; }
 
