@@ -21,6 +21,8 @@ namespace Uncas.Fraudo
             }
         }
 
+        public double Theta { get; set; }
+
         public double GetInitialGuess()
         {
             if (!HasFeatures())

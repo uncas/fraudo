@@ -42,8 +42,10 @@ namespace Uncas.Fraudo
                     break;
             }
 
-            OutputBestFit(dimensions, thetas);
-            OutputDeviations(samples, targetDeviation);
+            foreach (var dimension in dimensions)
+                dimension.Theta = thetas.ElementAt(dimensions.IndexOf(dimension));
+            ResultWriter.OutputBestFit(dimensions);
+            ResultWriter.OutputDeviations(samples, targetDeviation);
             return dimensions;
         }
 
@@ -75,47 +77,6 @@ namespace Uncas.Fraudo
         {
             return new DenseVector(
                 dimensions.Select(d => d.GetInitialGuess()).ToArray());
-        }
-
-        private static void OutputDeviations(
-            IEnumerable<Sample<T>> samples,
-            double targetDeviation)
-        {
-            double deviationThreshold = targetDeviation;
-            IEnumerable<Sample<T>> deviatingSamples =
-                samples.Where(
-                    x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
-
-            if (!deviatingSamples.Any())
-                return;
-
-            Console.WriteLine("Deviations above {0:P}:", deviationThreshold);
-            foreach (var sample in deviatingSamples.OrderByDescending(
-                x => Math.Abs(x.Deviation)))
-                Console.WriteLine(
-                    "  {0}, {1:P2}, {2:P2}, {3}",
-                    sample.Match,
-                    sample.Probability,
-                    sample.Deviation,
-                    sample.Identifier);
-        }
-
-        private static void OutputBestFit(
-            IList<Dimension<T>> dimensions,
-            Vector<double> thetas)
-        {
-            Console.WriteLine("Dimensions and best fit:");
-            for (int dimensionIndex = 0;
-                dimensionIndex < dimensions.Count;
-                dimensionIndex++)
-            {
-                double theta = thetas[dimensionIndex];
-                Dimension<T> dimension = dimensions[dimensionIndex];
-                Console.WriteLine(
-                    "  Theta={1:N3}, Feature: {0}",
-                    dimension.Description,
-                    theta);
-            }
         }
 
         private IList<Dimension<T>> GetDimensions(IList<Feature<T>> features)

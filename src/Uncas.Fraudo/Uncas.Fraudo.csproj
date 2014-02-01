@@ -57,6 +57,7 @@
     <Compile Include="Feature.cs" />
     <Compile Include="LogisticRegression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResultWriter.cs" />
     <Compile Include="Sample.cs" />
   </ItemGroup>
   <ItemGroup>
