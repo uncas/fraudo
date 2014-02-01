@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Generic;
 
@@ -57,7 +56,7 @@ namespace Uncas.Fraudo
             Vector<double> sums = new DenseVector(thetas.Count, 0d);
             foreach (var sample in samples)
             {
-                sample.Probability = GetProbability(sample, thetas);
+                sample.Probability = sample.GetProbability(thetas);
                 sums += sample.Deviation*sample.Dimensions;
             }
 
@@ -109,14 +108,6 @@ namespace Uncas.Fraudo
             }
 
             return dimensions;
-        }
-
-        private static double GetProbability(
-            Sample<T> sample,
-            Vector<double> theta)
-        {
-            double thetaX = sample.Dimensions.DotProduct(theta);
-            return SpecialFunctions.Logistic(thetaX);
         }
     }
 }

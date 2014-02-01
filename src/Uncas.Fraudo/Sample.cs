@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Generic;
 
@@ -60,6 +61,12 @@ namespace Uncas.Fraudo
         public double Deviation
         {
             get { return Probability - Actual; }
+        }
+
+        public double GetProbability(Vector<double> theta)
+        {
+            double thetaX = Dimensions.DotProduct(theta);
+            return SpecialFunctions.Logistic(thetaX);
         }
 
         public override string ToString()
