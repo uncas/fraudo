@@ -23,7 +23,7 @@ namespace Uncas.Fraudo
             int maxIterations = 10000)
         {
             IList<Dimension<T>> dimensions = GetDimensions(features);
-            Vector<double> thetas = GetInitialGuessAtTheta(dimensions);
+            Vector<double> thetas = Dimension<T>.GetInitialGuessAtTheta(dimensions);
             Console.WriteLine(
                 "Iterations to achieve deviation {0:P}:",
                 targetDeviation);
@@ -69,13 +69,6 @@ namespace Uncas.Fraudo
             double deviationSquared =
                 samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
             return Math.Sqrt(deviationSquared/samples.Count);
-        }
-
-        private static Vector<double> GetInitialGuessAtTheta(
-            IEnumerable<Dimension<T>> dimensions)
-        {
-            return new DenseVector(
-                dimensions.Select(d => d.GetInitialGuess()).ToArray());
         }
 
         private IList<Dimension<T>> GetDimensions(IList<Feature<T>> features)

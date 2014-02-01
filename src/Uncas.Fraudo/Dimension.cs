@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Generic;
 
 namespace Uncas.Fraudo
 {
@@ -22,6 +25,13 @@ namespace Uncas.Fraudo
         }
 
         public double Theta { get; set; }
+
+        public static Vector<double> GetInitialGuessAtTheta(
+            IEnumerable<Dimension<T>> dimensions)
+        {
+            return new DenseVector(
+                dimensions.Select(d => d.GetInitialGuess()).ToArray());
+        }
 
         public double GetInitialGuess()
         {
