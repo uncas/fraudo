@@ -8,18 +8,18 @@ namespace Uncas.Sandbox.Fraud
     {
         private static readonly List<string> Words =
             new List<string>
-                {
-                    "win",
-                    "million",
-                    "dollar",
-                    "rich",
-                    "famous",
-                    "sex",
-                    "viagra",
-                    "bank",
-                    "account",
-                    "bank transfer"
-                };
+            {
+                "win",
+                "million",
+                "dollar",
+                "rich",
+                "famous",
+                "sex",
+                "viagra",
+                "bank",
+                "account",
+                "bank transfer"
+            };
 
         public bool ContainsFeature(Comment comment)
         {
@@ -38,12 +38,13 @@ namespace Uncas.Sandbox.Fraud
 
         public static IEnumerable<Feature<Comment>> ContainsIndividualWords()
         {
-            return Words.Select(GetFunc);
+            return Words.Select(GetFeature);
         }
 
-        private static Feature<Comment> GetFunc(string word)
+        private static Feature<Comment> GetFeature(string word)
         {
-            return new Feature<Comment>("Word: " + word, comment => comment.Text.ToLower().Contains(word) ? 1d : 0d, 1d);
+            return new Feature<Comment>("Word: " + word,
+                comment => comment.Text.ToLower().Contains(word) ? 1d : 0d, 1d);
         }
     }
 }

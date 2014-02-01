@@ -33,7 +33,7 @@ namespace Uncas.Fraudo
                 thetas = GradientDescent(samples, thetas, stepSize);
                 double deviation = GetDeviation(samples);
                 bool breakIteration = deviation < targetDeviation;
-                if (iteration == 0 || (iteration + 1) % 10 == 0 || breakIteration)
+                if (iteration == 0 || (iteration + 1)%10 == 0 || breakIteration)
                     Console.WriteLine(
                         "  {0}: standard deviation={1:P3}",
                         iteration + 1,
@@ -44,9 +44,6 @@ namespace Uncas.Fraudo
 
             OutputBestFit(dimensions, thetas);
             OutputDeviations(samples, targetDeviation);
-            foreach (var dimension in dimensions)
-                dimension.Theta = thetas.ElementAt(dimensions.IndexOf(dimension));
-
             return dimensions;
         }
 
@@ -59,10 +56,10 @@ namespace Uncas.Fraudo
             foreach (var sample in samples)
             {
                 sample.Probability = GetProbability(sample, thetas);
-                sums += sample.Deviation * sample.Dimensions;
+                sums += sample.Deviation*sample.Dimensions;
             }
 
-            thetas += -stepSize * sums;
+            thetas += -stepSize*sums;
             return thetas;
         }
 
@@ -70,7 +67,7 @@ namespace Uncas.Fraudo
         {
             double deviationSquared =
                 samples.Select(sample => Math.Pow(sample.Deviation, 2d)).Sum();
-            return Math.Sqrt(deviationSquared / samples.Count);
+            return Math.Sqrt(deviationSquared/samples.Count);
         }
 
         private static Vector<double> GetInitialGuessAtTheta(
@@ -84,10 +81,10 @@ namespace Uncas.Fraudo
             IEnumerable<Sample<T>> samples,
             double targetDeviation)
         {
-            double deviationThreshold = targetDeviation / 2d;
+            double deviationThreshold = targetDeviation;
             IEnumerable<Sample<T>> deviatingSamples =
                 samples.Where(
-                x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
+                    x => Math.Abs(x.Deviation) > deviationThreshold).ToList();
 
             if (!deviatingSamples.Any())
                 return;

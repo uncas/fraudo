@@ -10,7 +10,6 @@ namespace Uncas.Fraudo
         }
 
         public Feature<T>[] Features { get; private set; }
-        public double Theta { get; set; }
 
         public string Description
         {

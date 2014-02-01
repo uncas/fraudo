@@ -8,13 +8,12 @@ namespace Uncas.Fraudo
     public class Sample<T>
     {
         public Sample(
-            T item, 
-            object identifier, 
-            bool match, 
+            T item,
+            object identifier,
+            bool match,
             IEnumerable<Feature<T>> features,
             bool useSecondOrder)
         {
-            Item = item;
             Identifier = identifier;
             Match = match;
             Features = features.Select(x => x.Value(item)).ToArray();
@@ -23,11 +22,11 @@ namespace Uncas.Fraudo
             if (useSecondOrder)
             {
                 int numberOfFeatures = Features.Length;
-                for (int featureIndex1 = 0; 
+                for (int featureIndex1 = 0;
                     featureIndex1 < numberOfFeatures;
                     featureIndex1++)
                 {
-                    for (int featureIndex2 = featureIndex1; 
+                    for (int featureIndex2 = featureIndex1;
                         featureIndex2 < numberOfFeatures;
                         featureIndex2++)
                         dimensions.Add(
@@ -38,19 +37,18 @@ namespace Uncas.Fraudo
             Dimensions = new DenseVector(dimensions.ToArray());
         }
 
-        public T Item { get; private set; }
         public object Identifier { get; private set; }
         public bool Match { get; private set; }
 
         /// <summary>
-        /// The features of the sample.
+        ///     The features of the sample.
         /// </summary>
         public double[] Features { get; private set; }
 
         /// <summary>
-        /// The dimensions that we're going to optimize for.
+        ///     The dimensions that we're going to optimize for.
         /// </summary>
-        public Vector<double> Dimensions { get; set; }
+        public Vector<double> Dimensions { get; private set; }
 
         public double Probability { get; set; }
 

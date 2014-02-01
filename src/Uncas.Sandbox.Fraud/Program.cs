@@ -8,26 +8,28 @@ namespace Uncas.Sandbox.Fraud
 {
     public class Program
     {
-        private const bool UseSecondOrder = true;
+        private const bool UseSecondOrder = false;
 
         private static void Main()
         {
             var features = new List<Feature<Comment>>();
             var badWordFeature = new BadWordFeature();
-            features.Add(new Feature<Comment>("Bad word", comment => badWordFeature.NumberOfBadWords(comment), 1d));
-            features.Add(new Feature<Comment>("Reputation", comment => Math.Log(1d + comment.UserReputation), -1d));
+            features.Add(new Feature<Comment>("Bad word",
+                comment => badWordFeature.NumberOfBadWords(comment), 1d));
+            features.Add(new Feature<Comment>("Reputation",
+                comment => Math.Log(1d + comment.UserReputation), -1d));
             features.AddRange(BadWordFeature.ContainsIndividualWords());
 
             IList<Comment> comments = new CommentRepository().GetComments();
             IList<Sample<Comment>> samples =
                 comments.Select(
                     comment =>
-                    ConvertToSample(comment, features)).
+                        ConvertToSample(comment, features)).
                     ToList();
             var logisticRegression = new LogisticRegression<Comment>(UseSecondOrder);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            logisticRegression.Iterate(samples, features);
+            logisticRegression.Iterate(samples, features, 0.01d);
             stopwatch.Stop();
             Console.WriteLine("Duration: {0:N4} seconds", stopwatch.Elapsed.TotalSeconds);
             Console.ReadKey();
