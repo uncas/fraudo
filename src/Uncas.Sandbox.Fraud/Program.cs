@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Generic;
 using Uncas.Fraudo;
 
 namespace Uncas.Sandbox.Fraud
@@ -29,9 +31,27 @@ namespace Uncas.Sandbox.Fraud
             var logisticRegression = new LogisticRegression<Comment>(UseSecondOrder);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            logisticRegression.Iterate(samples, features, 0.01d);
+            IList<Dimension<Comment>> dimensions = logisticRegression.Iterate(samples,
+                features, 0.01d);
             stopwatch.Stop();
             Console.WriteLine("Duration: {0:N4} seconds", stopwatch.Elapsed.TotalSeconds);
+
+            // Testing some different reputations:
+            for (int userReputation = 0; userReputation < 10; userReputation++)
+            {
+                var test = new Sample<Comment>(
+                    new Comment
+                    {
+                        Text = "Hej med dig. Sex?",
+                        UserReputation = userReputation
+                    },
+                    "X", false, features, UseSecondOrder);
+                Vector<double> denseVector =
+                    new DenseVector(dimensions.Select(x => x.Theta).ToArray());
+                double probability = test.GetProbability(denseVector);
+                Console.WriteLine("{0}, {1:P2}", userReputation, probability);
+            }
+
             Console.ReadKey();
         }
 
